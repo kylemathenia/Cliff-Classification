@@ -1,0 +1,215 @@
+//Transform elevation data to slope feature collection.
+var slope = ee.Terrain.slope('USGS/NED');
+
+//Transform slope to gradiant slope feature collection.
+var gs = ee.Terrain.slope(slope);
+
+//Attenuate slope values less than specified below. gt function returns true false binaries.
+//Binaries (gs.gt(55)) are multiplied by original image to restore true values. 
+var gs_above55 = gs.gt(55).multiply(gs);
+
+
+// Define a low-pass kernel. 30 meters seems to be a reasonable radius for the kernel.
+var boxcar = ee.Kernel.square({radius: 30, units: 'meters', normalize: true});
+// Smooth/blur the gradiant_slope by convolving with the boxcar kernel and create a new image.
+var smoothed_gs = gs_above55.convolve(boxcar);
+
+//Create composite between smoothed gradient slope and slope.
+//Gradient slope is weighted more after tuning.
+var composite=smoothed_gs.multiply(1.5).multiply(slope)
+
+
+//All pixels greater than 1300 are considered cliffs (1), all else not cliffs (0). 
+//This is a high resolution binary classification.
+var classified_composite=composite.gt(1300)
+
+//Reduce resolution by taking the mean of surrounding pixels.
+var classified_comp_30m_res=classified_composite.reduceResolution({reducer: ee.Reducer.mean(), maxPixels: 10}).gt(.25)
+//Reproject to match the resolution of the NED map. ~30 square meters.
+//This is a 30m resolution binary classification. 
+classified_comp_30m_res=classified_comp_30m_res.reproject('EPSG:4326', null, 30)
+
+
+//Below creates the fuzzy classification scaled, so you can zoom out and it doesn't lose info. 
+//To avoid scaling sampling loss when zoomed out, force it to compute at
+//the scale specified below. 15 is the highest reasonable scale before 
+//significant information is lost. Going lower is way more computationally
+//expensive for minimal information retention. 
+var scaled_composite=composite.reproject('EPSG:4326', null, 15)
+//Convolve with smoothing kernel to spread the values to a wider area to be able to be 
+//viewed at a more zoomed out level. 
+var scaled_composite = scaled_composite.convolve(boxcar);
+
+
+//*******************************Creating image with landforms data***********************************
+//Selecting only the 'constant' band of the landforms data and storing.
+var landforms = ee.Image('CSP/ERGo/1_0/US/landforms').select('constant');
+//var landforms = landforms_data.select('constant');
+var landforms_cliffs = (landforms.lt(16)).bitwiseAnd(landforms.gt(14))
+
+
+//***************************************Image summary**************************************
+//slope:                  Pure slope
+//gs:                     Pure gradient slope
+//gs_above55:             Gradient slope true values above 55 degrees
+//smoothed_gs:            Gradient slope true values above 55 'blurred' into zones
+//composite:              Composite between pure slope and smoothed gs
+//scaled_composite:       Composite computed at a specific scale, blurred to be more visible
+//classified_composite:   Composite classified into discrete cliff/no-cliff, 0/1 values 
+//landforms:              Pure landforms
+//landforms_cliffs:       Landform cliffs in discrete cliff/no-cliff, 0/1 values
+
+
+
+//*******************************Setting visual parameters**********************************
+var slopeVP = {
+    bands: ['slope'], 
+    min: 0,
+    max: 70,
+    palette: ['000000','005c5c','23fff5','c4d821','fff700','ff9ffc','fb00ff','ff0000']};
+
+var gsVP = {
+    bands: ['slope'], 
+    min: 0,
+    max: 70,
+    palette: ['000000','005c5c','23fff5','c4d821','fff700','ff9ffc','fb00ff','ff0000']};
+
+var gs_above55VP = {
+    bands: ['slope'], 
+    min: 0,
+    max: 70,
+    palette: ['000000','005c5c','23fff5','c4d821','fff700','ff9ffc','fb00ff','ff0000']};
+
+var smoothed_gsVP = {
+    bands: ['slope'], 
+    min: 0,
+    max: 60,
+    palette: ['000000','005c5c','23fff5','c4d821','fff700','ff9ffc','fb00ff','ff0000']};
+
+
+var compositeVP = {
+    bands: ['slope'], 
+    min: 0,
+    max: 2500,
+    palette: ['000000','000000','000000','000000','23fff5','fff700','fb00ff','ff0000']}; 
+
+
+var scaled_compositeVP = {
+    bands: ['slope'], 
+    min: 0,
+    max: 1000,
+    palette: ['000000','000000','000000','000000','000000','000000','23fff5','fff700','fb00ff','ff0000']};
+
+var classified_compositeVP = {
+    bands: ['slope'], 
+    min: 0,
+    max: 1,
+    palette: ['000000','fff700'],};
+
+var landformsVP = {
+  min: 11.0,
+  max: 42.0,
+  palette: [
+    '141414', '383838', '808080', 'EBEB8F', 'F7D311', 'AA0000', 'D89382',
+    'DDC9C9', 'DCCDCE', '1C6330', '68AA63', 'B5C98E', 'E1F0E5', 'a975ba',
+    '6f198c'],};
+
+var landforms_cliffsVP = {
+  min: 0,
+  max: 1,
+  palette: ['000000','ff0000'],};
+
+
+//*******************************Creating app UI**********************************
+//Add maps to the right side. Default as not shown, (0), except climb areas. 
+Map.addLayer(landforms_cliffs, landforms_cliffsVP, 'NED Cliffs',0);
+Map.addLayer(landforms, landformsVP, 'NED Landforms',0);
+Map.addLayer(classified_comp_30m_res, classified_compositeVP, 'Cliff Classification 30m Res',0);
+Map.addLayer(classified_composite, classified_compositeVP, 'Cliff Classification 10m Res',0);
+Map.addLayer(scaled_composite, scaled_compositeVP, 'Composite Scaled to Minimal Loss (Zoom>9)',0);
+Map.addLayer(composite, compositeVP, 'Composite',0);
+Map.addLayer(smoothed_gs, smoothed_gsVP, 'Blurred Gradiant Slope',0);
+Map.addLayer(gs_above55, gs_above55VP, 'Gradiant Slope Attenuated',0);
+Map.addLayer(gs, gsVP, 'Gradiant Slope',0);
+Map.addLayer(slope, slopeVP, 'Slope',0);
+add_buffered_areas(ClimbAreas,100) //Uses function defined below. Units are meters.
+Map.addLayer(ClimbAreas, {color: 'd900e7'}, 'Climbing Areas',1);
+
+ 
+//Creating image to show on left side.
+var images = {
+  'Slope': slope.visualize(slopeVP),
+  'Gradient Slope': gs.visualize(gsVP),
+  'Gradient Slope Attenuated': gs_above55.visualize(gs_above55VP),
+  'Smoothed Gradient Slope Attenuated': smoothed_gs.visualize(smoothed_gsVP),
+  'Composite' : composite.visualize(compositeVP), //'Cliff Enhance Zoom:14-16'
+  'Composite Scaled to Minimal Loss (Zoom>9)' : scaled_composite.visualize(scaled_compositeVP), //'Cliff Enhance Zoom: 10-13'
+  'Cliff Classification 10m Res': classified_composite.visualize(classified_compositeVP),
+  'Cliff Classification 30m Res': classified_comp_30m_res.visualize(classified_compositeVP),
+  'NED Landforms': landforms.visualize(landformsVP),
+  'NED Landform Cliffs' : landforms_cliffs.visualize(landforms_cliffsVP),
+};
+
+//Initializing zoom variable and zoom lables for both sides. Distinct labels must be made
+//for each side because they can only be applied to one map.
+var zoom=Map.getZoom()
+var label_left=ui.Label('Zoom: '+zoom)
+var label_right=ui.Label('Zoom: '+zoom)
+
+//Initializing the default map widget for right side. 
+//ui.root.widgets().get(0) returns the default map widget...
+var defaultmap = ui.root.widgets().get(0).add(label_right);
+
+//Create the left map, add the zoom label and disable controling visability.
+var left_maps = ui.Map().add(label_left).setControlVisibility(false);
+
+//Add layer selector to left map with function defined below. 
+//Display first layer in image collection (0).
+var leftSelector = addLayerSelector(left_maps, 0, 'top-left');
+//Complicated function to add layer selector.
+function addLayerSelector(mapToChange, defaultValue, position) {
+  //Creating the label for the layer selector.
+  var label = ui.Label('Select a layer:');
+  //Function to change the map when a new selection is made on the layer selector.
+  function updateMap(selection) {
+    mapToChange.layers().set(0, ui.Map.Layer(images[selection]));
+  }
+  // Configures a selection dropdown to allow the user to choose between images
+  //and set the map to update when a user makes a selection.
+  var select = ui.Select({items: Object.keys(images), onChange: updateMap});
+  select.setValue(Object.keys(images)[defaultValue], true);
+  var controlPanel =
+      ui.Panel({widgets: [label, select], style: {position: position}});
+  mapToChange.add(controlPanel);
+}
+
+//When the zoom level changes, update the zoom variable.
+Map.onChangeZoom(function() {
+  zoom=(Map.getZoom());
+  label_left.setValue('Zoom: '+zoom)
+  label_right.setValue('Zoom: '+zoom)
+});
+
+// Create a SplitPanel.
+var splitPanel = ui.SplitPanel({
+  firstPanel: left_maps,
+  secondPanel: defaultmap, //The other maps are also there. 
+  wipe: true,
+  style: {stretch: 'both'}
+});
+
+// Set the SplitPanel as the only thing in the UI root.
+ui.root.widgets().reset([splitPanel]);
+var linker = ui.Map.Linker([left_maps,defaultmap]);
+
+
+
+//****************************FUNCTIONS*************************************
+
+//************************Add Buffered Areas*********************************
+//Function to add the buffered areas to the map. Units are meters. 
+function add_buffered_areas(Areas, Buffer_Radius) {
+    var buffered = Areas.map(function(f) {
+      return f.buffer(Buffer_Radius);
+    });
+    Map.addLayer(buffered, {color: 'd900e7'}, 'Buffered Areas',0);}
