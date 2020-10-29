@@ -132,8 +132,6 @@ Map.addLayer(smoothed_gs, smoothed_gsVP, 'Blurred Gradiant Slope',0);
 Map.addLayer(gs_above55, gs_above55VP, 'Gradiant Slope Attenuated',0);
 Map.addLayer(gs, gsVP, 'Gradiant Slope',0);
 Map.addLayer(slope, slopeVP, 'Slope',0);
-add_buffered_areas(ClimbAreas,100) //Uses function defined below. Units are meters.
-Map.addLayer(ClimbAreas, {color: 'd900e7'}, 'Climbing Areas',1);
 
  
 //Creating image to show on left side.
