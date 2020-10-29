@@ -92,7 +92,6 @@ var landforms_cliffsVP = {
 
 
 //*******************************Creating app UI**********************************
-Map.addLayer(ClimbAreas, {color: 'd900e7'}, 'Climbing Areas',1);
 
 //Creating image to show on left side.
 var images = {
