@@ -1,3 +1,5 @@
+//*******************************Creating DEM based layers***********************************
+
 //Transform elevation data to slope feature collection.
 var slope = ee.Terrain.slope('USGS/NED');
 
