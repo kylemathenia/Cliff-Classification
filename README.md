@@ -6,4 +6,5 @@
 
 Go to [the site](https://sites.google.com/view/relativelyrad/cliff-classification/app-video) for more info. 
 
+
 The code can be pasted directly into the Google Earth Engine code editor. "App Layers" is the code implemented in the app. "All Layers" includes additional layers that might be interesting to see. 
