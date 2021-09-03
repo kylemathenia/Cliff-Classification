@@ -13,7 +13,7 @@ The best tool for finding cliffs in the United States.
 
 **Fuzzy Cliff Classification (Zoom: 10-13):** This allows you to see the cliffs even when zoomed out really far. It may take a moment to render because there is a lot to compute. 
 
-**Cliff Classification 10m Res:** Just the fuzzy classification converted to binary yes/no cliff tiles. The fuzzy maps are better. 
+**Cliff Classification 10m Res:** Just the fuzzy classification converted to binary true/false cliff tiles. The fuzzy maps are better. 
 
 **Cliff Classification 30m Res:** A lower resolution version of cliffs classified so you can compare with the NED Landforms cliff classification map. 
 
