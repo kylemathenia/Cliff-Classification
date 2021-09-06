@@ -19,9 +19,10 @@ The best tool for finding cliffs in the United States.
 
 **NED Cliff Classification:** The previous best available cliff classification map I could find. Data provided by The Conservation Science Partners. This only shows the tiles classified as cliffs in the NED Landforms map. 
 
-# Go to [the site](https://sites.google.com/view/relativelyrad/cliff-classification/app-video) for more info. 
+# Go to [the site](https://sites.google.com/view/relativelyrad/cliff-classification/app-video) and [Google Earth Engine](https://developers.google.com/earth-engine/guides/playground) for more info. 
 
 
 The code can be pasted directly into the Google Earth Engine code editor. Alternatively, it can be modified and used with the earth engine API. 
+
 
 "App Layers" is the code implemented in the app. "All Layers" includes additional layers that might be interesting to see. 
