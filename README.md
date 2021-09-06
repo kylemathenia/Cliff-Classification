@@ -1,4 +1,4 @@
-The best tool for finding cliffs in the United States.
+The best tool for finding and exploring cliffs in the United States.
 # [Go to app.](https://relativeradness.users.earthengine.app/view/cliffs)
 
 ![Cliffs](https://media.giphy.com/media/97k0I9lZmvf5xzQK2L/giphy-downsized.gif)
