@@ -22,7 +22,7 @@ The best tool for finding cliffs in the United States.
 # Go to [the site](https://sites.google.com/view/relativelyrad/cliff-classification/app-video) and [Google Earth Engine](https://developers.google.com/earth-engine/guides/playground) for more info. 
 
 
-The code can be pasted directly into the Google Earth Engine code editor. Alternatively, it can be modified and used with the earth engine API. 
+The code can be pasted directly into the Google Earth Engine code editor. Alternatively, it can be modified and used with the Earth Engine API. 
 
 
 "App Layers" is the code implemented in the app. "All Layers" includes additional layers that might be interesting to see. 
