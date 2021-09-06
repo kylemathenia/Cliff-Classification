@@ -88,7 +88,6 @@ var smoothed_gsVP = {
     max: 60,
     palette: ['000000','005c5c','23fff5','c4d821','fff700','ff9ffc','fb00ff','ff0000']};
 
-
 var compositeVP = {
     bands: ['slope'], 
     min: 0,
@@ -206,8 +205,7 @@ var linker = ui.Map.Linker([left_maps,defaultmap]);
 
 //****************************FUNCTIONS*************************************
 
-//************************Add Buffered Areas*********************************
-//Function to add the buffered areas to the map. Units are meters. 
+//Adds buffered areas to the map. Units are meters. 
 function add_buffered_areas(Areas, Buffer_Radius) {
     var buffered = Areas.map(function(f) {
       return f.buffer(Buffer_Radius);
