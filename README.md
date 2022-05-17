@@ -1,6 +1,6 @@
 # The best tool for finding and exploring cliffs in the United States.
 
-## [Go to the site](https://sites.google.com/view/relativelyrad/cliff-classification/app-video)
+## [Go to site](https://sites.google.com/view/relativelyrad/cliff-classification/app-video)
 
 ![Cliffs](https://media.giphy.com/media/97k0I9lZmvf5xzQK2L/giphy-downsized.gif)
 
@@ -22,7 +22,7 @@
 
 There are two versions: "App Layers" is the code implemented in the app. "All Layers" includes additional layers that might be interesting to see. 
 
-## [Go to app.](https://relativeradness.users.earthengine.app/view/cliffs)
+## [Go to app](https://relativeradness.users.earthengine.app/view/cliffs)
 
 ## [Google Earth Engine](https://developers.google.com/earth-engine/guides/playground) for more info. 
 
