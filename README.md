@@ -1,12 +1,12 @@
-The best tool for finding and exploring cliffs in the United States.
+# The best tool for finding and exploring cliffs in the United States.
 
-# [Go to the site](https://sites.google.com/view/relativelyrad/cliff-classification/app-video)
+## [Go to the site](https://sites.google.com/view/relativelyrad/cliff-classification/app-video)
 
 ![Cliffs](https://media.giphy.com/media/97k0I9lZmvf5xzQK2L/giphy-downsized.gif)
 
 ![Cliffs](https://media.giphy.com/media/elRmM3PfsE1s7BKTrk/giphy.gif?cid=790b76117335d14ed91d21fe88bc0ce3ae8cf7da88c66335&rid=giphy.gif&ct=g)
 
-# Layers:
+## Layers:
 
 **Slope:** Pure slope visualized with colors to highlight dramatic terrain. Yellow and above is pretty seriously steep. 
 
@@ -22,9 +22,9 @@ The best tool for finding and exploring cliffs in the United States.
 
 There are two versions: "App Layers" is the code implemented in the app. "All Layers" includes additional layers that might be interesting to see. 
 
-# [Go to app.](https://relativeradness.users.earthengine.app/view/cliffs)
+## [Go to app.](https://relativeradness.users.earthengine.app/view/cliffs)
 
-# [Google Earth Engine](https://developers.google.com/earth-engine/guides/playground) for more info. 
+## [Google Earth Engine](https://developers.google.com/earth-engine/guides/playground) for more info. 
 
 
 The code can be pasted directly into the Google Earth Engine code editor. Alternatively, it can be modified and used with the Earth Engine API. 
