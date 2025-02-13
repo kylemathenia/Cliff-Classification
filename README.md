@@ -1,6 +1,6 @@
 # The best tool for finding and exploring cliffs in the United States.
 
-## [Go to site](https://sites.google.com/view/relativelyrad/cliff-classification/app-video)
+## [Go to site](https://sites.google.com/view/relativelyrad/cliff-classification?authuser=0)
 
 ![Cliffs](https://media.giphy.com/media/97k0I9lZmvf5xzQK2L/giphy-downsized.gif)
 
